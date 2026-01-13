@@ -12,59 +12,59 @@ NC='\033[0m' # No Color
 
 # Function to display spinner
 spinner() {
-    local pid=$1
-    local delay=0.1
-    local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
-    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
-        local temp=${spinstr#?}
-        printf "${CYAN} [%c]  ${NC}" "$spinstr"
-        local spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-        printf "\b\b\b\b\b\b"
-    done
-    printf "    \b\b\b\b"
+local pid=$1
+local delay=0.1
+local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+local temp=${spinstr#?}
+printf "${CYAN} [%c]  ${NC}" "$spinstr"
+local spinstr=$temp${spinstr%"$temp"}
+sleep $delay
+printf "\b\b\b\b\b\b"
+done
+printf "    \b\b\b\b"
 }
 
 # Function to run command with progress
 run_command() {
-    local cmd="$1"
-    local msg="$2"
-    printf "${YELLOW}%-50s${NC}" "$msg..."
-    eval "$cmd" > /dev/null 2>&1 &
-    spinner $!
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}Done${NC}"
-    else
-        echo -e "${RED}Failed${NC}"
-        exit 1
-    fi
+local cmd="$1"
+local msg="$2"
+printf "${YELLOW}%-50s${NC}" "$msg..."
+eval "$cmd" > /dev/null 2>&1 &
+spinner $!
+if [ $? -eq 0 ]; then
+echo -e "${GREEN}Done${NC}"
+else
+echo -e "${RED}Failed${NC}"
+exit 1
+fi
 }
 
 # Print banner
 print_banner() {
-	echo -e "${BLUE}${BOLD}"
-	echo "   ____    _    ____ ____     ____            _       _   "
-	echo "  / ___|  / \  / ___/ ___|   / ___|  ___ _ __(_)_ __ | |_ "
-	echo " | |  _  / _ \| |   \___ \   \___ \ / __| '__| | '_ \| __|"
-	echo " | |_| |/ ___ \ |___ ___) |   ___) | (__| |  | | |_) | |_ "
-	echo "  \____/_/   \_\____|____/   |____/ \___|_|  |_| .__/ \__|"
-	echo "                                               |_|        "
-	echo ""
-	echo "                  --- Ubuntu 22.04 ---"
-	echo "                  --- By Mostech ---"
-	echo -e "${NC}"
+echo -e "${BLUE}${BOLD}"
+echo "   ____    _    ____ ____     ____            _       _   "
+echo "  / ___|  / \  / ___/ ___|   / ___|  ___ _ __(_)_ __ | |_ "
+echo " | |  _  / _ \| |   \___ \   \___ \ / __| '__| | '_ \| __|"
+echo " | |_| |/ ___ \ |___ ___) |   ___) | (__| |  | | |_) | |_ "
+echo "  \____/_/   \_\____|____/   |____/ \___|_|  |_| .__/ \__|"
+echo "                                               |_|        "
+echo ""
+echo "                  --- Ubuntu 22.04 ---"
+echo "                  --- By MikrotikBot ---"
+echo -e "${NC}"
 }
 
 # Check for root access
 if [ "$EUID" -ne 0 ]; then
-    echo -e "${RED}This script must be run as root${NC}"
-    exit 1
+echo -e "${RED}This script must be run as root${NC}"
+exit 1
 fi
 
 # Check Ubuntu version
 if [ "$(lsb_release -cs)" != "jammy" ]; then
-    echo -e "${RED}This script only supports Ubuntu 22.04 (Jammy)${NC}"
-    exit 1
+echo -e "${RED}This script only supports Ubuntu 22.04 (Jammy)${NC}"
+exit 1
 fi
 
 # Print banner
@@ -86,9 +86,10 @@ run_command "apt install -y npm" "Installing NPM ($(( ++current_step ))/$total_s
 
 run_command "wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb && dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb" "Installing libssl ($(( ++current_step ))/$total_steps)"
 
-run_command "curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -" "Adding MongoDB key ($(( ++current_step ))/$total_steps)"
+run_command "curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-6.0.gpg | apt-key add -" "Adding MongoDB key ($(( ++current_step ))/$total_steps)"
 
-run_command "echo 'deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse' | tee /etc/apt/sources.list.d/mongodb-org-4.4.list" "Adding MongoDB repository ($(( ++current_step ))/$total_steps)"
+run_command "echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" \
+| tee /etc/apt/sources.list.d/mongodb-org-6.0.list" "Adding MongoDB repository ($(( ++current_step ))/$total_steps)"
 
 run_command "apt-get update -y" "Updating package list ($(( ++current_step ))/$total_steps)"
 
@@ -126,7 +127,7 @@ run_command "mkdir /var/log/genieacs && chown genieacs:genieacs /var/log/genieac
 
 # Create systemd service files
 for service in cwmp nbi fs ui; do
-    cat << EOF > /etc/systemd/system/genieacs-$service.service
+cat << EOF > /etc/systemd/system/genieacs-$service.service
 [Unit]
 Description=GenieACS $service
 After=network.target
@@ -139,35 +140,35 @@ ExecStart=/usr/local/bin/genieacs-$service
 [Install]
 WantedBy=default.target
 EOF
-    echo -e "${YELLOW}Creating genieacs-$service service file ($(( ++current_step ))/$total_steps)${NC}... ${GREEN}Done${NC}"
+echo -e "${YELLOW}Creating genieacs-$service service file ($(( ++current_step ))/$total_steps)${NC}... ${GREEN}Done${NC}"
 done
 
 # Create logrotate configuration
 cat << EOF > /etc/logrotate.d/genieacs
 /var/log/genieacs/*.log /var/log/genieacs/*.yaml {
-    daily
-    rotate 30
-    compress
-    delaycompress
-    dateext
+daily
+rotate 30
+compress
+delaycompress
+dateext
 }
 EOF
 echo -e "${YELLOW}Creating logrotate configuration ($(( ++current_step ))/$total_steps)${NC}... ${GREEN}Done${NC}"
 
 # Enable and start services
 for service in cwmp nbi fs ui; do
-    run_command "systemctl enable genieacs-$service && systemctl start genieacs-$service" "Enabling and starting genieacs-$service ($(( ++current_step ))/$total_steps)"
+run_command "systemctl enable genieacs-$service && systemctl start genieacs-$service" "Enabling and starting genieacs-$service ($(( ++current_step ))/$total_steps)"
 done
 
 # Check services status
 echo -e "\n${MAGENTA}${BOLD}Checking services status:${NC}"
 for service in mongod genieacs-cwmp genieacs-nbi genieacs-fs genieacs-ui; do
-    status=$(systemctl is-active $service)
-    if [ "$status" = "active" ]; then
-        echo -e "${GREEN}✔ $service is running${NC}"
-    else
-        echo -e "${RED}✘ $service is not running${NC}"
-    fi
+status=$(systemctl is-active $service)
+if [ "$status" = "active" ]; then
+echo -e "${GREEN}✔ $service is running${NC}"
+else
+echo -e "${RED}✘ $service is not running${NC}"
+fi
 done
 
 echo -e "\n${GREEN}${BOLD}Script execution completed successfully!${NC}"
