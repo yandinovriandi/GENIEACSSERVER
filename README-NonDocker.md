@@ -24,7 +24,7 @@ sudo su
 ```
 # 2) Download Script GACS
 ```bash
-git clone [https://github.com/yandinovriandi/GENIEACSSERVER.git](https://github.com/yandinovriandi/GENIEACSSERVER.git)
+git clone https://github.com/yandinovriandi/GENIEACSSERVER.git
 ```
 # 3) Masuk ke folder GACS
 ```bash
