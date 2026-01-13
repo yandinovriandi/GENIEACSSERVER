@@ -18,48 +18,48 @@ Panduan ini menginstal **GenieACS** langsung di host beserta virtual parameter d
 ---
 
 ## Instalasi
-```bash
 # 1) Masuk sebagai root
+```bash
 sudo su
 ```
-```bash
 # 2) Download Script GACS
+```bash
 git clone https://github.com/safrinnetwork/GACS-Ubuntu-22.04
 ```
-```bash
 # 3) Masuk ke folder GACS
+```bash
 cd GACS-Ubuntu-22.04
 ```
-```bash
 # 4) Install dos2unix
+```bash
 apt-get update -y && apt-get install -y dos2unix
 ```
-```bash
 # 5) Convert format script GACS
+```bash
 dos2unix GACS-Jammy.sh
 ```
-```bash
 # 6) Beri izin script GACS
+```bash
 chmod +x GACS-Jammy.sh
 ```
-```bash
 # 7) Instal GACS
+```bash
 ./GACS-Jammy.sh
 ```
 
 ---
 
 ## Install Parameter
-```bash
 # 1) Masuk ke folder parameter di repo
+```bash
 cd parameter
 ```
-```
 # 2) Install parameter
+```
 mongorestore --db genieacs --drop .
 ```
-```
 # 3) Restart service GenieACS
+```
 systemctl restart genieacs-{cwmp,ui,nbi}
 ```
 > Jika dump Anda berada di lokasi lain, sesuaikan path pada langkah nomor (2).
