@@ -24,11 +24,11 @@ sudo su
 ```
 # 2) Download Script GACS
 ```bash
-git clone https://github.com/safrinnetwork/GACS-Ubuntu-22.04
+git clone [https://github.com/yandinovriandi/GENIEACSSERVER.git](https://github.com/yandinovriandi/GENIEACSSERVER.git)
 ```
 # 3) Masuk ke folder GACS
 ```bash
-cd GACS-Ubuntu-22.04
+cd GENIEACSSERVER
 ```
 # 4) Install dos2unix
 ```bash
